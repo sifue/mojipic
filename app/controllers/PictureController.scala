@@ -5,7 +5,10 @@ import java.time.{Clock, LocalDateTime}
 import javax.inject.Inject
 
 import com.google.common.net.MediaType
+import com.redis.RedisClient
 import domain.entity.{PictureProperty, TwitterId}
+import domain.repository.PicturePropertyRepository
+import infrastructure.redis.RedisKeys
 import play.api.cache.SyncCacheApi
 import play.api.libs.Files.TemporaryFile
 import play.api.mvc._
@@ -18,6 +21,8 @@ class PicturesController @Inject()(
                                     clock: Clock,
                                     executionContext: ExecutionContext,
                                     val cache: SyncCacheApi,
+                                    picturePropertyRepository: PicturePropertyRepository,
+                                    redisClient: RedisClient
                                   ) extends TwitterLoginController(cc) {
 
   implicit val ec = executionContext
@@ -34,10 +39,11 @@ class PicturesController @Inject()(
             val originalFilepath =  FileSystems.getDefault.getPath(storeDirPath.toString, System.currentTimeMillis().toString)
             Files.copy(file.ref.path, originalFilepath, StandardCopyOption.COPY_ATTRIBUTES)
             val propertyValue = createPicturePropertyValue(TwitterId(accessToken.getUserId), file, form, originalFilepath)
-
-            println(propertyValue)
-            // TODO MySQLへのプロパティ保存とRedisへのタスクの保存
-
+            val pictureId = picturePropertyRepository.create(propertyValue)
+            pictureId.map({ (id) =>
+              redisClient.rpush(RedisKeys.Tasks, id.value)
+              Ok("Picture uploaded.")
+            })
             Future.successful(Ok("Picture uploaded."))
           case _ => Future.successful(Unauthorized("Need picture data."))
         }
