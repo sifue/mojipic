@@ -2,7 +2,7 @@ package controllers
 
 import java.nio.file.{FileSystems, Files, Path, StandardCopyOption}
 import java.time.{Clock, LocalDateTime}
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import com.google.common.net.MediaType
 import com.redis.RedisClient
@@ -16,6 +16,7 @@ import play.api.mvc.MultipartFormData.FilePart
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PicturesController @Inject()(
                                     cc: ControllerComponents,
                                     clock: Clock,

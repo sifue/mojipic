@@ -1,14 +1,15 @@
 package controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import infrastructure.twitter.{TwitterAuthenticator, TwitterException}
-import play.api.{Configuration}
+import play.api.Configuration
 import play.api.cache.SyncCacheApi
 import play.api.mvc.ControllerComponents
 
 import scala.concurrent.duration._
 
+@Singleton
 class OAuthController @Inject()(
                                  cc: ControllerComponents,
                                  twitterAuthenticator: TwitterAuthenticator,
