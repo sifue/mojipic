@@ -64,7 +64,13 @@ class ConvertPictureActor @Inject()(
       }
     }
 
-    // TODO 変換後の情報で picture_propeties を更新
+    picturePropertyRepository.update(
+      convertedPictureProperty.id,
+      convertedPictureProperty.value
+    ).onComplete {
+      case Success(_) => Logger.info(s"Converted and updated. convertedPictureProperty: ${convertedPictureProperty}")
+      case Failure(t) => Logger.error("Fail to update.", t)
+    }
   }
 
   private[this] def invokeCmd(property: PictureProperty, convertedFilepath: Path): Unit = {
