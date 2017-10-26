@@ -11,7 +11,6 @@ trait PicturePropertyRepository {
     *
     * @param value 画像のプロパティの値
     * @return Future.successful(PictureId)     新しく割り当てられた画像ID
-    *         Future.failed(DatabaseException) 保存に失敗した
     */
   def create(value: PictureProperty.Value): Future[PictureId]
 
@@ -20,8 +19,6 @@ trait PicturePropertyRepository {
     *
     * @param pictureId 画像ID
     * @return Future.successful(PictureProperty)         読み込みに成功した
-    *         Future.failed(PictureNotFoundException) 画像のプロパティが見つからなかった
-    *         Future.failed(DatabaseException)        読み込みに失敗した
     */
   def find(pictureId: PictureId): Future[PictureProperty]
 
