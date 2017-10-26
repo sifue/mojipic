@@ -11319,12 +11319,22 @@ var Pictures = function (_React$Component) {
   _createClass(Pictures, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      var _this2 = this;
+
       this.updatePictures();
+      this.timerID = setInterval(function () {
+        return _this2.updatePictures();
+      }, 5000);
+    }
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      clearInterval(this.timerID);
     }
   }, {
     key: 'updatePictures',
     value: function updatePictures() {
-      var _this2 = this;
+      var _this3 = this;
 
       var url = '';
       if (Mojipic.twitterId()) {
@@ -11342,14 +11352,18 @@ var Pictures = function (_React$Component) {
           return p.value.status === 'Success';
         });
         if (pictures.length > 0) {
-          _this2.lastCreatedTime = pictures[0].value.createdTime;
+          _this3.lastCreatedTime = pictures[0].value.createdTime;
         }
-        _this2.setState(function (prevState, props) {
+        _this3.setState(function (prevState, props) {
           return {
             pictures: pictures.concat(prevState.pictures)
           };
         });
       });
+
+      __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.dz-preview').hide('slow', function () {
+        __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).remove();
+      }); // 最新を読み込んだらアップロード実行したサムネは消す
     }
 
     /**
